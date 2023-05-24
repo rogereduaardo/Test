@@ -30,19 +30,22 @@ int main(void) {
     return 1;
   }
 
-  if (0 == child_pid)
+  if (child_pid)
   {
-    printf("CHILD! pid: %d, ppid: %d\n", getpid(),getppid());
-    sleep(5);
-    return 42;
+    printf("\nPARENT: Waiting on child\n");
+    wait(NULL);
+    printf("PARENT: Child complete!\n");
   }
   else
   {
-    printf("\nPARENT! pid: %d, ppid: %d, chil_pid: %d\n", getpid(),               getppid(),child_pid);
-    int wait_status = 0;
-    pid_t pid = wait(&wait_status);
-    printf("\nPARENT: Returned from wait: pid: %d\n", pid);
-    printf("PARENT: child exit status: %d", WEXITSTATUS(wait_status));
+    printf("CHILD:\n");
+    char *argv[] = {"/bin/ls", "-l", NULL};
+    char *envp[] = {NULL};
+    int result = execve("/bin/ls", argv, envp);
+    if (-1 == result)
+    {
+      perror("execve");
+    }
   }
   
   return 0;
